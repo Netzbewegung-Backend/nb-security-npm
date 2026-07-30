@@ -1,10 +1,11 @@
 image: node:22
 
 pipelines:
-  default:
-    - step:
-        name: NPM Security Checks
-        script:
-          - curl -sS -L -o /tmp/npm-security-check.sh "https://raw.githubusercontent.com/Netzbewegung-Backend/nb-security-npm/master/.bitbucket/npm-security-check.sh"
-          - chmod +x /tmp/npm-security-check.sh
-          - bash /tmp/npm-security-check.sh
+  branches:
+    master:
+      - step:
+          name: NPM Security Checks
+          script:
+            - curl -sS -L -o /tmp/npm-security-check.sh "https://raw.githubusercontent.com/Netzbewegung-Backend/nb-security-npm/master/.bitbucket/npm-security-check.sh"
+            - chmod +x /tmp/npm-security-check.sh
+            - bash /tmp/npm-security-check.sh
