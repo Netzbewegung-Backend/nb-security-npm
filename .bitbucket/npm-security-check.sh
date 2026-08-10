@@ -3,6 +3,8 @@ set -euo pipefail
 
 errors=0
 
+echo "nb-security-npm: Version 2026-08-10"
+
 while IFS= read -r -d '' pkg; do
     dir=$(dirname "$pkg")
     echo "---"
