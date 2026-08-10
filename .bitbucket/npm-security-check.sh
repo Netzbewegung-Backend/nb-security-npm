@@ -35,7 +35,8 @@ while IFS= read -r -d '' pkg; do
         lockpath="$dir/$lockfile"
         if [[ -f "$lockpath" ]]; then
             if grep -q 'node-sass' "$lockpath" 2>/dev/null; then
-                echo "⚠️  WARNING: node-sass in $lockpath gefunden"
+                echo "❌ ERROR: node-sass in $lockpath gefunden"
+                errors=1
             fi
         fi
     done
