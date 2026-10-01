@@ -3,7 +3,7 @@ set -euo pipefail
 
 errors=0
 
-echo "nb-security-npm: Version 2026-08-10"
+echo "nb-security-npm: Version 2026-10-01"
 
 while IFS= read -r -d '' pkg; do
     dir=$(dirname "$pkg")
@@ -36,7 +36,21 @@ while IFS= read -r -d '' pkg; do
     for lockfile in package-lock.json yarn.lock; do
         lockpath="$dir/$lockfile"
         if [[ -f "$lockpath" ]]; then
-            if grep -q 'node-sass' "$lockpath" 2>/dev/null; then
+            # Exakt auf wirklich installiertes node-sass pruefen, nicht nur
+            # auf den Substring. Sonst False Positives durch aehnlich
+            # benannte Pakete (node-sass-glob-importer etc.) und durch
+            # optionale peerDependencies (z.B. sass-loader).
+            if [[ "$lockfile" == "package-lock.json" ]]; then
+                lockver=$(grep -m1 '"lockfileVersion"' "$lockpath" | grep -o '[0-9]\+')
+                if [[ "${lockver:-1}" -ge 2 ]]; then
+                    pattern='^ *"node_modules/node-sass":'
+                else
+                    pattern='^ *"node-sass": \{'
+                fi
+            else
+                pattern='^"?node-sass@'
+            fi
+            if grep -Eq "$pattern" "$lockpath" 2>/dev/null; then
                 echo "❌ ERROR: node-sass in $lockpath gefunden"
                 errors=1
             else
